@@ -11,7 +11,7 @@ const ExerciseSchema = new Schema({
     id_user : String,
     description: String,
     duration: Number,
-    date: {type: Date, require: false}
+    date: String
 })
 
 const User = mongoose.model("User", UserSchema)

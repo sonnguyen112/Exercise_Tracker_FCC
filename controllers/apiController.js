@@ -11,6 +11,7 @@ class ApiController{
                 username : username,
             }])
             var id = new_user[0]["_id"]
+            console.log(new_user)
             return res.json({
                 username:username,
                 _id : id
@@ -18,6 +19,7 @@ class ApiController{
         }
         else if (req.method === "GET"){
             var users_list = await user_db.find()
+            console.log(users_list)
             return res.json(users_list)
         }
     }
@@ -53,18 +55,21 @@ class ApiController{
             else{
                 var date = new Date(date_input)
             }
-            await exercise_db.create({
+            date = date.toDateString()
+            var new_exercise = await exercise_db.create({
                 id_user:id_user,
                 duration:duration,
                 description:description,
                 date:date
             })
+
+            console.log(new_exercise)
         
             return res.json({
                 username : username,
                 description: description,
                 duration: duration,
-                date: date.toDateString(),
+                date: date,
                 _id:id_user
             })
         }
@@ -82,27 +87,20 @@ class ApiController{
         var user = await user_db.findById(id_user)
         var username = user["username"]
 
-        var log_list = await exercise_db.find({id_user:id_user})
+        var log_list = await exercise_db.find({id_user:id_user}).select("description duration date -_id")
         if (from){
             log_list = log_list.filter(function(item){
-                return item["date"] > new Date(from)
+                return new Date(item["date"]) > new Date(from)
             })
         }
         if (to){
             log_list = log_list.filter(function(item){
-                return item["date"] < new Date(to)
+                return new Date(item["date"]) < new Date(to)
             })
         }
         if (limit){
             log_list = log_list.slice(0, limit)
         }
-        log_list = log_list.map(function(item){
-            return {
-                description:item["description"],
-                duration:item["duration"],
-                date:item["date"].toDateString()
-            }
-        })
         var count = log_list.length
 
         return res.json({

@@ -1,4 +1,5 @@
 const express = require('express')
+var morgan = require('morgan')
 const app = express()
 const cors = require('cors')
 require('dotenv').config()
@@ -8,6 +9,7 @@ app.use(express.urlencoded({
   extended:true
 }))
 app.use(express.static('public'))
+app.use(morgan('combined'))
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 });
